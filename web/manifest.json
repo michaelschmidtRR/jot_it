@@ -1,0 +1,23 @@
+{
+    "name": "jot_it",
+    "short_name": "jot_it",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#0175C2",
+    "theme_color": "#0175C2",
+    "description": "JotIt - Personal project of Michael Schmidt for Retro Rabbit. A note taking app with the ability to extract text from images and add the text into the note. It boasts cloud storage, notes are available to the user on any device, provided the user signs into the same account. The app also long contains typical features of a normal note-taking app.",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "icons/Icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

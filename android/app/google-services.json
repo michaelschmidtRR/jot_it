@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "312515160449",
+    "project_id": "jotit-afd14",
+    "storage_bucket": "jotit-afd14.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:312515160449:android:5d412abf685c1c96e92080",
+        "android_client_info": {
+          "package_name": "com.example.jot_it"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "312515160449-84kfbic6fkpriamgve3pi83r76dml2ev.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.jot_it",
+            "certificate_hash": "90532430f421f9c45cfdb7f1939aae3c4aa06fcf"
+          }
+        },
+        {
+          "client_id": "312515160449-tbhb6dt5n314d35orpns03mcpjsdmhj5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOyDM34NPCTuv7PTxDrTowkHeLeD_Ts7w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "312515160449-tbhb6dt5n314d35orpns03mcpjsdmhj5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
