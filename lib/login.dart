@@ -19,10 +19,18 @@ class _LogInPageState extends State<LogInPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomPadding: false,
+
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          Padding(
+              padding: const EdgeInsets.all(0.0),
+              child: Container(child: Image.asset('assets/jotit-logo-transparent.png', width: 230, height: 70))
+          ),
           //e-mail textfield
+          SizedBox(
+            height: 20.0,
+          ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
@@ -44,6 +52,9 @@ class _LogInPageState extends State<LogInPage> {
             ),
           ),
 
+          SizedBox(
+            height: 30.0,
+          ),
           //Sign in / Sign up button
           RaisedButton(
             onPressed: () {

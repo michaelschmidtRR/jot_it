@@ -7,6 +7,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: Text("JotIt")),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -20,7 +21,6 @@ class HomePage extends StatelessWidget {
               },
               child: Text("Sign out"),
             ),
-
           ],
         ),
       ),
