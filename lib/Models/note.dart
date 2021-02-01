@@ -1,5 +1,9 @@
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import '../styles.dart';
+
 
 class Note {
   final String id;
@@ -54,3 +58,91 @@ Note toNote(DocumentSnapshot doc) => doc.exists
     : null;
 
 Color _parseColor(num colorInt) => Color(colorInt ?? 0xFFFFFFFF);
+
+
+
+/// A single item (preview of a Note) in the Notes list.
+class NoteItem extends StatelessWidget {
+  const NoteItem({
+    Key key,
+    this.note,
+  }) : super(key: key);
+
+  final Note note;
+
+  @override
+  Widget build(BuildContext context) => Hero(
+    tag: 'NoteItem${note.id}',
+    child: DefaultTextStyle(
+      style: kNoteTextLight,
+      child: Container(
+        decoration: BoxDecoration(
+          color: note.color,
+          borderRadius: BorderRadius.all(Radius.circular(8)),
+          border: note.color.value == 0xFFFFFFFF ? Border.all(color: kBorderColorLight) : null,
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            if (note.title?.isNotEmpty == true) Text(note.title,
+              style: kCardTitleLight,
+              maxLines: 1,
+            ),
+            if (note.title?.isNotEmpty == true) const SizedBox(height: 14),
+            Flexible(
+              flex: 1,
+              child: Text(note.content ?? ''), // wrapping using a Flexible to avoid overflow
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+
+/// Grid view of [Note]s.
+class NotesGrid extends StatelessWidget {
+  final List<Note> notes;
+  final void Function(Note) onTap;
+
+  const NotesGrid({
+    Key key,
+    @required this.notes,
+    this.onTap,
+  }) : super(key: key);
+
+  static NotesGrid create({
+    Key key,
+    @required List<Note> notes,
+    void Function(Note) onTap,
+  }) => NotesGrid(
+    key: key,
+    notes: notes,
+    onTap: onTap,
+  );
+
+  @override
+  Widget build(BuildContext context) => SliverPadding(
+    padding: const EdgeInsets.symmetric(horizontal: 10),
+    sliver: SliverGrid(
+      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: 200.0,
+        mainAxisSpacing: 10.0,
+        crossAxisSpacing: 10.0,
+        childAspectRatio: 1 / 1.2,
+      ),
+      delegate: SliverChildBuilderDelegate(
+            (BuildContext context, int index) => _noteItem(context, notes[index]),
+        childCount: notes.length,
+      ),
+    ),
+  );
+
+  Widget _noteItem(BuildContext context, Note note) => InkWell(
+    onTap: () => onTap?.call(note),
+    child: NoteItem(note: note),
+  );
+}

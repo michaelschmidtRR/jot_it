@@ -1,11 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
+import 'package:google_sign_in/google_sign_in.dart' show GoogleSignIn;
 import 'home.dart';
 import 'login.dart';
 
 class AuthenticationProvider {
   final FirebaseAuth firebaseAuth;
+  final _googleSignIn = GoogleSignIn();
   //FirebaseAuth instance
   AuthenticationProvider(this.firebaseAuth);
   //Constructor to initialize the FirebaseAuth instance
@@ -32,6 +34,20 @@ class AuthenticationProvider {
       return "Signed in!";
     } on FirebaseAuthException catch (e) {
       return e.message;
+    }
+  }
+
+  void _signInWithGoogle() async {
+    try {
+      final googleUser = await _googleSignIn.signIn();
+      final googleAuth = await googleUser.authentication;
+      final credential = GoogleAuthProvider.credential(
+        idToken: googleAuth.idToken,
+        accessToken: googleAuth.accessToken,
+      );
+      await FirebaseAuth.instance.signInWithCredential(credential);
+    } catch (e, s) {
+      debugPrint('google signIn failed: $e. $s');
     }
   }
 

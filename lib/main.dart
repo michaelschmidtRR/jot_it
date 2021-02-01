@@ -22,10 +22,21 @@ class MyApp extends StatelessWidget {
         ),
         StreamProvider(
           create: (context) => context.read<AuthenticationProvider>().authState,
-        )
+        ),
+        // StreamProvider.value(
+        //   initialData:
+        //   initialData: CurrentUser.initial,
+        //   value: FirebaseAuth.instance.onAuthStateChanged.map((user) => CurrentUser.create(user)),
+        //   child: Consumer<CurrentUser>(
+        //     builder: (context, user, _) => MaterialApp(
+        //       title: 'Flutter Keep',
+        //       home: user.isInitialValue ? Scaffold(body: const Text('Loading...')) : user.data != null ? HomePage() : LogInPage(),
+        //     ),
+        //   ),
+        // )
       ],
       child: MaterialApp(
-        title: 'Firebase Authentication',
+        title: 'JotIt',
         home: Authenticate(),
       ),
     );
