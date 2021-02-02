@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'Models/note.dart';
 import 'authentication.dart';
 import 'package:flutter/material.dart';
@@ -10,94 +8,126 @@ import 'package:provider/provider.dart';
 /// Home screen, displays [Note] in a Grid or List.
 ///
 
-class HomePage extends StatefulWidget {
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  @override
-  Widget build(BuildContext context) {
-    final firebaseUser = context.watch<User>();
-
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text("JotIt"),
-      ),
-      body: new Center(
-        child: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection('notes-${firebaseUser.uid}').snapshots(),
-          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            return !snapshot.hasData
-                ? Center(child: CircularProgressIndicator())
-                : ListView.builder(
-              itemCount: snapshot.data.docs.length,
-              itemBuilder: (context, index) {
-                DocumentSnapshot data = snapshot.data.docs[index];
-                return Text(data.data()['title']);
-              },
-            );
-          },
-        ),
-      ),
-      floatingActionButton: new FloatingActionButton(
-        //onPressed: ,
-        tooltip: 'New note',
-        child: new Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
-  }
-}
-
 // class HomePage extends StatefulWidget {
 //   @override
-//   State<StatefulWidget> createState() => _HomePageState();
+//   _HomePageState createState() => _HomePageState();
 // }
 //
 // class _HomePageState extends State<HomePage> {
-//   bool _gridView = true; // `true` to show a Grid, otherwise a List.
-//
-//   //Listens to the value and exposes it to all of StreamProvider descendants.
 //   @override
-//   Widget build(BuildContext context) => StreamProvider.value(
-//     value: _createNoteStream(context),
-//     child: Scaffold(
-//       body: CustomScrollView(
-//         slivers: <Widget>[
-//           _appBar(context), // a floating appbar
-//           const SliverToBoxAdapter(
-//             child: SizedBox(height: 24), // top spacing
-//           ),
-//           _buildNotesView(context),
-//           const SliverToBoxAdapter(
-//             child: SizedBox(height: 80.0), // bottom spacing make sure the content can scroll above the bottom bar
-//           ),
-//           RaisedButton(
-//             onPressed: () {
-//               context.read<AuthenticationProvider>().signOut();
-//             },
-//             child: Text("Sign out"),
-//           ),
-//         ],
-//       ),
-//       floatingActionButton: _fab(context),
-//       bottomNavigationBar: _bottomActions(),
-//       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-//       extendBody: true,
-//     ),
-//   );
+//   Widget build(BuildContext context) {
+//     final firebaseUser = context.watch<User>();
 //
-//   /// A floating appBar like the one of Google Keep
-//   Widget _appBar(BuildContext context) => SliverAppBar(
-//     floating: false,
-//     snap: false,
-//     title: Text("JotIt"),
-//     automaticallyImplyLeading: false,
-//     centerTitle: true,
-//     titleSpacing: 0,
-//     backgroundColor: Colors.transparent,
-//     elevation: 0,
-//   );
+//     return new Scaffold(
+//       appBar: new AppBar(
+//         title: new Text("JotIt"),
+//       ),
+//       body: new Center(
+//         child: StreamBuilder(
+//           stream: FirebaseFirestore.instance.collection('notes-${firebaseUser.uid}').snapshots(),
+//           builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+//             return !snapshot.hasData
+//                 ? Center(child: CircularProgressIndicator())
+//                 : ListView.builder(
+//                   itemCount: snapshot.data.docs.length,
+//                   itemBuilder: (context, index) {
+//                   DocumentSnapshot data = snapshot.data.docs[index];
+//                     return Text(data.data()['title']);
+//               },
+//             );
+//           },
+//         ),
+//       ),
+//       floatingActionButton: new FloatingActionButton(
+//         //onPressed: ,
+//         tooltip: 'New note',
+//         child: new Icon(Icons.add),
+//       ), // This trailing comma makes auto-formatting nicer for build methods.
+//     );
+//   }
+// }
+
+class HomePage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+
+  //Listens to the value and exposes it to all of StreamProvider descendants.
+  @override
+  Widget build(BuildContext context) => StreamProvider.value(
+        value: _createNoteStream(context),
+        child: Scaffold(
+          body: CustomScrollView(
+            slivers: <Widget>[
+              _appBar(context), // a floating appbar
+              const SliverToBoxAdapter(
+                child: SizedBox(height: 24), // top spacing
+              ),
+              _buildNotesView(context),
+              const SliverToBoxAdapter(
+                child: SizedBox(
+                    height:
+                        80.0), // bottom spacing make sure the content can scroll above the bottom bar
+              ),
+            ],
+          ),
+          floatingActionButton: _fab(context),
+          //bottomNavigationBar: _bottomActions(),
+          floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+          extendBody: true,
+        ),
+      );
+
+  /// A floating appBar like the one of Google Keep
+  Widget _appBar(BuildContext context) => SliverAppBar(
+        floating: true,
+        snap: true,
+        title: Text("JotIt"),
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        titleSpacing: 0,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      );
+
+  Widget _fab(BuildContext context) => FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () {},
+      );
+
+  Widget _buildNotesView(BuildContext context) => Consumer<List<Note>>(
+        builder: (context, notes, _) {
+          if (notes?.isNotEmpty != true) {
+            return SliverFillRemaining(
+              hasScrollBody: false,
+              child: Text(
+                'Notes you add appear here',
+                style: TextStyle(
+                  color: Colors.black54,
+                  fontSize: 14,
+                ),
+              ),
+            );
+          }
+
+          final widget = NotesGrid.create;
+          return widget(notes: notes, onTap: (_) {});
+        },
+      );
+
+  Stream<List<Note>> _createNoteStream(BuildContext context) {
+    //final firebaseUser = context.watch<User>();
+
+    final uid = Provider.of<User>(context)?.uid;
+    return FirebaseFirestore.instance.collection('notes-$uid')
+        //.where('state', isEqualTo: 0)
+        .snapshots()
+        //.handleError((e) => debugPrint('query failed: $e'))
+        .map((snapshot) => Note.fromQuery(snapshot));
+  }
+}
 //
 //   Widget _topActions(BuildContext context) => Container(
 //     width: double.infinity,
@@ -144,14 +174,6 @@ class _HomePageState extends State<HomePage> {
 //     onPressed: () {},
 //   );
 //
-//   // Widget _buildAvatar(BuildContext context) {
-//   //   final url = Provider.of<CurrentUser>(context)?.data?.photoUrl;
-//   //   return CircleAvatar(
-//   //     backgroundImage: url != null ? NetworkImage(url) : null,
-//   //     child: url == null ? const Icon(Icons.face) : null,
-//   //     radius: 17,
-//   //   );
-//   // }
 //
 //   /// A grid/list view to display notes
 //   Widget _buildNotesView(BuildContext context) => Consumer<List<Note>>(
