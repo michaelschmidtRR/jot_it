@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:jot_it/note.dart';
 import 'Models/note.dart';
 import 'authentication.dart';
 import 'package:flutter/material.dart';
@@ -53,7 +54,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   //Listens to the value and exposes it to all of StreamProvider descendants.
   @override
   Widget build(BuildContext context) => StreamProvider.value(
@@ -63,7 +63,7 @@ class _HomePageState extends State<HomePage> {
             slivers: <Widget>[
               _appBar(context), // a floating appbar
               const SliverToBoxAdapter(
-                child: SizedBox(height: 24), // top spacing
+                child: SizedBox(height: 14), // top spacing
               ),
               _buildNotesView(context),
               const SliverToBoxAdapter(
@@ -75,59 +75,109 @@ class _HomePageState extends State<HomePage> {
           ),
           floatingActionButton: _fab(context),
           //bottomNavigationBar: _bottomActions(),
-          floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
           extendBody: true,
         ),
       );
 
   /// A floating appBar like the one of Google Keep
   Widget _appBar(BuildContext context) => SliverAppBar(
-        floating: true,
-        snap: true,
-        title: Text("JotIt"),
-        automaticallyImplyLeading: false,
-        centerTitle: true,
-        titleSpacing: 0,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      );
-
-  Widget _fab(BuildContext context) => FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () {},
-      );
-
-  Widget _buildNotesView(BuildContext context) => Consumer<List<Note>>(
-        builder: (context, notes, _) {
-          if (notes?.isNotEmpty != true) {
-            return SliverFillRemaining(
-              hasScrollBody: false,
-              child: Text(
-                'Notes you add appear here',
-                style: TextStyle(
-                  color: Colors.black54,
-                  fontSize: 14,
+          floating: false,
+          snap: false,
+          pinned: true,
+          /*title: Text(
+            'JotIt!',
+            style: TextStyle(
+                fontSize: 20, foreground: Paint()..color = Colors.black),
+          ),*/
+          expandedHeight: 160.0,
+          flexibleSpace: FlexibleSpaceBar(
+              centerTitle: true,
+              title: Text('JotIt',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18.0,
+                  )),
+              background: Image.network(
+                'https://images.pexels.com/photos/443356/pexels-photo-443356.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
+                fit: BoxFit.cover,
+              )),
+          automaticallyImplyLeading: false,
+          centerTitle: true,
+          titleSpacing: 0,
+          backgroundColor: Colors.white24,
+          elevation: 100,
+          actions: <Widget>[
+            PopupMenuButton(
+              icon: Icon(Icons.exit_to_app),
+              onSelected: (value) {
+                value();
+              },
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  height: 40,
+                  child: Text('Settings'),
+                  value: () {
+                    debugPrint('goto Flutter.io');
+                  },
                 ),
-              ),
-            );
-          }
-
-          final widget = NotesGrid.create;
-          return widget(notes: notes, onTap: (_) {});
-        },
-      );
-
-  Stream<List<Note>> _createNoteStream(BuildContext context) {
-    //final firebaseUser = context.watch<User>();
-
-    final uid = Provider.of<User>(context)?.uid;
-    return FirebaseFirestore.instance.collection('notes-$uid')
-        //.where('state', isEqualTo: 0)
-        .snapshots()
-        //.handleError((e) => debugPrint('query failed: $e'))
-        .map((snapshot) => Note.fromQuery(snapshot));
-  }
+                PopupMenuItem(
+                  height: 40,
+                  child: Text('Log Out'),
+                  value: () {
+                    context.read<AuthenticationProvider>().signOut();
+                  },
+                ),
+              ],
+            ),
+          ]);
 }
+
+Widget _fab(BuildContext context) => FloatingActionButton.extended(
+      label: Text(
+        'JotIt!',
+        style: TextStyle(
+            fontSize: 16, foreground: Paint()..color = Colors.amber),
+      ),
+      icon: Icon(Icons.create, color: Colors.amber),
+      onPressed: () async {
+        await Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => NoteScreen()));
+      },
+      backgroundColor: Colors.white,
+    );
+
+Widget _buildNotesView(BuildContext context) => Consumer<List<Note>>(
+      builder: (context, notes, _) {
+        if (notes?.isNotEmpty != true) {
+          return SliverFillRemaining(
+            hasScrollBody: false,
+            child: Text(
+              'Notes you add appear here',
+              style: TextStyle(
+                color: Colors.black54,
+                fontSize: 14,
+              ),
+            ),
+          );
+        }
+
+        final widget = NotesGrid.create;
+        return widget(notes: notes, onTap: (_) {});
+      },
+    );
+
+Stream<List<Note>> _createNoteStream(BuildContext context) {
+  final uid = Provider.of<User>(context)?.uid;
+
+  return FirebaseFirestore.instance
+      .collection('notes-$uid')
+      //.where('state', isEqualTo: 0)
+      .snapshots()
+      //.handleError((e) => debugPrint('query failed: $e'))
+      .map((snapshot) => Note.fromQuery(snapshot));
+}
+
 //
 //   Widget _topActions(BuildContext context) => Container(
 //     width: double.infinity,

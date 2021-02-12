@@ -38,6 +38,9 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'JotIt',
         home: Authenticate(),
+        theme: ThemeData(
+          primarySwatch: Colors.amber,
+        ),
       ),
     );
   }
