@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_sign_in/google_sign_in.dart' show GoogleSignIn;
 import 'home.dart';
@@ -16,10 +17,11 @@ class AuthenticationProvider {
   Stream<User> get authState => firebaseAuth.idTokenChanges();
 
   //SIGN UP METHOD
-  Future<String> signUp({String email, String password}) async {
+  Future<String> signUp({String email, String password, BuildContext context}) async {
     try {
       await firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
+      Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
       return "Signed up!";
     } on FirebaseAuthException catch (e) {
       return e.message;
@@ -27,10 +29,11 @@ class AuthenticationProvider {
   }
 
   //SIGN IN METHOD
-  Future<String> signIn({String email, String password}) async {
+  Future<String> signIn({String email, String password, BuildContext context}) async {
     try {
       await firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
+      Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
       return "Signed in!";
     } on FirebaseAuthException catch (e) {
       return e.message;
@@ -52,8 +55,9 @@ class AuthenticationProvider {
   }
 
   //SIGN OUT METHOD
-  Future<void> signOut() async {
+  Future<void> signOut(BuildContext context) async {
     await firebaseAuth.signOut();
+    Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
   }
 
 }
@@ -69,6 +73,6 @@ class Authenticate extends StatelessWidget {
       return HomePage();
     }
     //The user isn't logged in and hence navigate to SignInPage.
-    return LogInPage();
+    return LoginPage();
   }
 }

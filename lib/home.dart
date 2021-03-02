@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:jot_it/note.dart';
+import 'package:jot_it/note_editor.dart';
 import 'Models/note.dart';
 import 'authentication.dart';
 import 'package:flutter/material.dart';
@@ -90,12 +91,12 @@ class _HomePageState extends State<HomePage> {
             style: TextStyle(
                 fontSize: 20, foreground: Paint()..color = Colors.black),
           ),*/
-          expandedHeight: 160.0,
+          //expandedHeight: 160.0,
           flexibleSpace: FlexibleSpaceBar(
               centerTitle: true,
               title: Text('JotIt',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Colors.black,
                     fontSize: 18.0,
                   )),
               background: Image.network(
@@ -125,7 +126,7 @@ class _HomePageState extends State<HomePage> {
                   height: 40,
                   child: Text('Log Out'),
                   value: () {
-                    context.read<AuthenticationProvider>().signOut();
+                    context.read<AuthenticationProvider>().signOut(context);
                   },
                 ),
               ],
@@ -142,7 +143,7 @@ Widget _fab(BuildContext context) => FloatingActionButton.extended(
       icon: Icon(Icons.create, color: Colors.amber),
       onPressed: () async {
         await Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => NoteScreen()));
+            .push(MaterialPageRoute(builder: (context) => NoteEditor()));
       },
       backgroundColor: Colors.white,
     );
@@ -163,15 +164,23 @@ Widget _buildNotesView(BuildContext context) => Consumer<List<Note>>(
         }
 
         final widget = NotesGrid.create;
-        return widget(notes: notes, onTap: (_) {});
+        return widget(notes: notes, onTap: (_) {_onNoteTap;});
       },
     );
+
+void _onNoteTap(Note note, BuildContext context) async {
+  //routing????
+  //final command =
+  //await Navigator.pushNamed(context, '/note', arguments: { 'note': note });
+  await Navigator.of(context).push(MaterialPageRoute(builder: (context) => NoteEditor(note: note,)));
+  //processNoteCommand(_scaffoldKey.currentState, command);
+}
 
 Stream<List<Note>> _createNoteStream(BuildContext context) {
   final uid = Provider.of<User>(context)?.uid;
 
   return FirebaseFirestore.instance
-      .collection('notes-$uid')
+      .collection('notes-$uid').orderBy('createdAt', descending: true)
       //.where('state', isEqualTo: 0)
       .snapshots()
       //.handleError((e) => debugPrint('query failed: $e'))

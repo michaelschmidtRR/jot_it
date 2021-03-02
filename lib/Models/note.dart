@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../styles.dart';
 
 
-class Note {
+class Note extends ChangeNotifier {
   final String id;
   String title;
   String content;
@@ -27,6 +27,25 @@ class Note {
 
   /// Transforms the Firestore query [snapshot] into a list of [Note] instances.
   static List<Note> fromQuery(QuerySnapshot snapshot) => snapshot != null ? toNotes(snapshot) : [];
+
+  Note copy({bool updateTimestamp = false}) => Note(
+    id: id,
+    createdAt: (updateTimestamp || createdAt == null) ? DateTime.now() : createdAt,
+  )..update(this, updateTimestamp: updateTimestamp);
+
+  void update(Note other, {bool updateTimestamp = true}) {
+    title = other.title;
+    content = other.content;
+    color = other.color;
+    //state = other.state;
+
+    if (updateTimestamp || other.modifiedAt == null) {
+      modifiedAt = DateTime.now();
+    } else {
+      modifiedAt = other.modifiedAt;
+    }
+    //notifyListeners();
+  }
 }
 
 /// State enum for a note.
@@ -36,6 +55,7 @@ class Note {
 //   archived,
 //   deleted,
 // }
+
 
 /// Transforms the query result into a list of notes.
 List<Note> toNotes(QuerySnapshot query) => query.docs
@@ -92,7 +112,7 @@ class NoteItem extends StatelessWidget {
             if (note.title?.isNotEmpty == true) const SizedBox(height: 14),
             Flexible(
               flex: 1,
-              child: Text(note.content ?? ''), // wrapping using a Flexible to avoid overflow
+              child: Text(note.content ?? '', overflow: TextOverflow.fade,), // wrapping using a Flexible to avoid overflow
             ),
           ],
         ),
@@ -102,7 +122,7 @@ class NoteItem extends StatelessWidget {
 }
 
 
-/// Grid view of [Note]s.
+/// Grid view of notes.
 class NotesGrid extends StatelessWidget {
   final List<Note> notes;
   final void Function(Note) onTap;
@@ -144,4 +164,6 @@ class NotesGrid extends StatelessWidget {
     onTap: () => onTap?.call(note),
     child: NoteItem(note: note),
   );
+
+
 }
