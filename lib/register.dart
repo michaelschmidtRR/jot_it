@@ -1,7 +1,5 @@
-
 import 'package:flutter/services.dart';
 import 'package:jot_it/login.dart';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -268,14 +266,11 @@ class _RegisterPageState extends State<RegisterPage> {
             Container(
               decoration: BoxDecoration(
                 gradient: new LinearGradient(
-                    colors: [
-                      Colors.black12,
-                      Colors.grey,
-                    ],
                     begin: const FractionalOffset(0.0, 0.0),
                     end: const FractionalOffset(1.0, 1.0),
                     stops: [0.0, 1.0],
                     tileMode: TileMode.clamp),
+                color: Colors.grey,
               ),
               width: 100.0,
               height: 1.0,
